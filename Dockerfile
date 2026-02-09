@@ -7,6 +7,8 @@ COPY checkweek/ checkweek/
 
 RUN pip install --no-cache-dir .
 
+ENV FLASK_DEBUG=0
+
 # 태스크 데이터 영속성을 위한 볼륨 마운트 포인트
 VOLUME /root/.checkweek
 

@@ -6,7 +6,8 @@ services:
     ports:
       - "5000:5000"
     env_file:
-      - .env
+      - path: .env
+        required: false
     volumes:
       - checkweek-data:/root/.checkweek
     restart: unless-stopped
@@ -15,7 +16,8 @@ services:
   checkweek:
     build: .
     env_file:
-      - .env
+      - path: .env
+        required: false
     volumes:
       - checkweek-data:/root/.checkweek
     profiles:
@@ -26,7 +28,8 @@ services:
     build: .
     entrypoint: ["checkweek", "run-scheduler"]
     env_file:
-      - .env
+      - path: .env
+        required: false
     volumes:
       - checkweek-data:/root/.checkweek
     restart: unless-stopped

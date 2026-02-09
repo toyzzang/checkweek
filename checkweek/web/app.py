@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import traceback
+
 from flask import Flask, redirect, render_template, request, url_for
 
 from checkweek.config import AppConfig
@@ -9,6 +11,16 @@ from checkweek.models import Task, TaskStatus, TaskStore, TaskTag
 
 app = Flask(__name__)
 store = TaskStore()
+
+
+@app.errorhandler(Exception)
+def handle_error(e):
+    """Show error details instead of generic 500 page."""
+    tb = traceback.format_exc()
+    return (
+        f"<h1>Error</h1><pre>{tb}</pre>"
+        f"<p><a href='/'>Back to dashboard</a></p>"
+    ), 500
 
 
 @app.route("/")
