@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "checkweek"
+version = "0.1.0"
+description = "Weekly task management system with Notion sync"
+requires-python = ">=3.10"
+dependencies = [
+    "notion-client>=2.2.0",
+    "apscheduler>=3.10.0",
+    "gitpython>=3.1.40",
+    "python-dotenv>=1.0.0",
+    "click>=8.1.0",
+    "rich>=13.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-asyncio>=0.23.0",
+]
+
+[project.scripts]
+checkweek = "checkweek.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["checkweek*"]
