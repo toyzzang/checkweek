@@ -251,6 +251,21 @@ def run_sync_now():
         console.print(f"  [red]Git error: {result['git_error']}[/red]")
 
 
+# --- Web commands ---
+
+
+@main.command(name="web")
+@click.option("--host", "-h", default="0.0.0.0", help="Host to bind")
+@click.option("--port", "-p", default=5000, type=int, help="Port to bind")
+@click.option("--debug", is_flag=True, help="Enable debug mode")
+def web_server(host: str, port: int, debug: bool):
+    """Start the web dashboard."""
+    from checkweek.web.app import run_web
+
+    console.print(f"[cyan]Starting web dashboard at http://{host}:{port}[/cyan]")
+    run_web(host=host, port=port, debug=debug)
+
+
 # --- Config commands ---
 
 

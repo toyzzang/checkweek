@@ -1,4 +1,16 @@
 services:
+  # 웹 대시보드 (메인)
+  web:
+    build: .
+    entrypoint: ["checkweek", "web", "-p", "5000"]
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    volumes:
+      - checkweek-data:/root/.checkweek
+    restart: unless-stopped
+
   # 일회성 CLI 명령 실행용
   checkweek:
     build: .
@@ -6,6 +18,8 @@ services:
       - .env
     volumes:
       - checkweek-data:/root/.checkweek
+    profiles:
+      - cli
 
   # 매주 자동 동기화 스케줄러 (백그라운드 데몬)
   scheduler:

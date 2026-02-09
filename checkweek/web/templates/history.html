@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CheckWeek - History</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #0f172a;
+            color: #e2e8f0;
+            min-height: 100vh;
+        }
+        .container { max-width: 900px; margin: 0 auto; padding: 24px; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 32px;
+        }
+        header h1 { font-size: 28px; font-weight: 700; color: #f8fafc; }
+        header a {
+            color: #94a3b8;
+            text-decoration: none;
+            background: #1e293b;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+        header a:hover { color: #e2e8f0; }
+
+        .week-card {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .week-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #334155;
+        }
+        .week-header h2 { font-size: 16px; font-weight: 600; }
+        .week-stats {
+            display: flex;
+            gap: 16px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        .week-stats .done { color: #22c55e; }
+        .week-stats .rate { color: #a78bfa; }
+
+        .task-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+        .task-row + .task-row { border-top: 1px solid #1e293b; }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .status-dot.todo { background: #f59e0b; }
+        .status-dot.in_progress { background: #3b82f6; }
+        .status-dot.done { background: #22c55e; }
+
+        .task-row .title { flex: 1; }
+        .task-row .title.is-done { text-decoration: line-through; color: #64748b; }
+
+        .tag {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+        .tag-work { background: #1e3a5f; color: #60a5fa; }
+        .tag-personal { background: #14532d; color: #4ade80; }
+        .tag-study { background: #3b0764; color: #c084fc; }
+        .tag-health { background: #450a0a; color: #f87171; }
+        .tag-meeting { background: #422006; color: #fbbf24; }
+        .tag-other { background: #1e293b; color: #94a3b8; }
+
+        .empty { color: #475569; text-align: center; padding: 40px; }
+
+        .synced-badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: #14532d;
+            color: #4ade80;
+        }
+        .not-synced-badge {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: #422006;
+            color: #fbbf24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Week History</h1>
+            <a href="/">Back to Dashboard</a>
+        </header>
+
+        {% if not weeks %}
+        <div class="empty">No history yet.</div>
+        {% endif %}
+
+        {% for item in weeks %}
+        <div class="week-card">
+            <div class="week-header">
+                <h2>{{ item.week.week_start }} ~ {{ item.week.week_end }}</h2>
+                <div class="week-stats">
+                    <span class="done">Done: {{ item.summary.done }}/{{ item.summary.total }}</span>
+                    <span class="rate">{{ item.summary.completion_rate }}</span>
+                    {% if item.week.synced_to_notion %}
+                    <span class="synced-badge">Synced</span>
+                    {% else %}
+                    <span class="not-synced-badge">Not synced</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% for task in item.week.tasks %}
+            <div class="task-row">
+                <span class="status-dot {{ task.status.value }}"></span>
+                <span class="title {% if task.status.value == 'done' %}is-done{% endif %}">{{ task.title }}</span>
+                <span class="tag tag-{{ task.tag.value }}">{{ task.tag.value }}</span>
+            </div>
+            {% endfor %}
+            {% if not item.week.tasks %}
+            <div class="empty" style="padding:16px">No tasks this week.</div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
