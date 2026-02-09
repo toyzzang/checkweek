@@ -1,0 +1,21 @@
+services:
+  # 일회성 CLI 명령 실행용
+  checkweek:
+    build: .
+    env_file:
+      - .env
+    volumes:
+      - checkweek-data:/root/.checkweek
+
+  # 매주 자동 동기화 스케줄러 (백그라운드 데몬)
+  scheduler:
+    build: .
+    entrypoint: ["checkweek", "run-scheduler"]
+    env_file:
+      - .env
+    volumes:
+      - checkweek-data:/root/.checkweek
+    restart: unless-stopped
+
+volumes:
+  checkweek-data:

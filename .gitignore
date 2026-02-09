@@ -24,3 +24,6 @@ Thumbs.db
 
 # Project
 *.log
+
+# Docker
+docker-compose.override.yml
