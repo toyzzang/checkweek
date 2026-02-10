@@ -7,7 +7,14 @@ import traceback
 from flask import Flask, redirect, render_template, request, url_for
 
 from checkweek.config import AppConfig
-from checkweek.models import Task, TaskStatus, TaskStore, TaskTag
+from checkweek.models import (
+    RoutineDefinition,
+    Task,
+    TaskStatus,
+    TaskStore,
+    TaskTag,
+    TaskType,
+)
 
 app = Flask(__name__)
 store = TaskStore()
@@ -25,48 +32,64 @@ def handle_error(e):
 
 @app.route("/")
 def index():
-    """Main dashboard - show current week's tasks."""
+    """Main dashboard - weekly checklist view."""
     week = store.get_current_week()
     summary = week.get_summary()
 
-    # Group tasks by status for kanban-style view
-    groups = {
-        "todo": [t for t in week.tasks if t.status == TaskStatus.TODO],
-        "in_progress": [t for t in week.tasks if t.status == TaskStatus.IN_PROGRESS],
-        "done": [t for t in week.tasks if t.status == TaskStatus.DONE],
-    }
+    # 섹션별 분류
+    once_pending = [
+        t for t in week.tasks
+        if t.task_type == TaskType.ONCE and t.status != TaskStatus.DONE
+    ]
+    routine_pending = [
+        t for t in week.tasks
+        if t.task_type == TaskType.ROUTINE and t.status != TaskStatus.DONE
+    ]
+    completed = [t for t in week.tasks if t.status == TaskStatus.DONE]
+
+    routines = store.load_routines()
 
     return render_template(
         "index.html",
         week=week,
         summary=summary,
-        groups=groups,
+        once_pending=once_pending,
+        routine_pending=routine_pending,
+        completed=completed,
         tags=[t.value for t in TaskTag],
-        statuses=[s.value for s in TaskStatus],
+        routines=routines,
     )
 
 
 @app.route("/add", methods=["POST"])
 def add_task():
-    """Add a new task."""
+    """Add a one-time task."""
     title = request.form.get("title", "").strip()
     tag = request.form.get("tag", "other")
-    due_date = request.form.get("due_date", "").strip() or None
 
     if title:
         week = store.get_current_week()
-        task = Task(title=title, tag=TaskTag(tag), due_date=due_date)
+        task = Task(title=title, tag=TaskTag(tag))
         week.add_task(task)
         store.save_week(week)
 
     return redirect(url_for("index"))
 
 
-@app.route("/status/<task_id>/<new_status>", methods=["POST"])
-def update_status(task_id: str, new_status: str):
-    """Update a task's status."""
+@app.route("/check/<task_id>", methods=["POST"])
+def check_task(task_id: str):
+    """Check a task (once: done, routine: count+1)."""
     week = store.get_current_week()
-    week.update_task_status(task_id, TaskStatus(new_status))
+    week.check_task(task_id)
+    store.save_week(week)
+    return redirect(url_for("index"))
+
+
+@app.route("/uncheck/<task_id>", methods=["POST"])
+def uncheck_task(task_id: str):
+    """Uncheck a task (once: undo, routine: count-1)."""
+    week = store.get_current_week()
+    week.uncheck_task(task_id)
     store.save_week(week)
     return redirect(url_for("index"))
 
@@ -77,6 +100,37 @@ def delete_task(task_id: str):
     week = store.get_current_week()
     week.remove_task(task_id)
     store.save_week(week)
+    return redirect(url_for("index"))
+
+
+@app.route("/routine/add", methods=["POST"])
+def add_routine():
+    """Add a routine definition + create task for current week."""
+    title = request.form.get("title", "").strip()
+    tag = request.form.get("tag", "other")
+    target_count = int(request.form.get("target_count", 1))
+
+    if title and target_count > 0:
+        routine = RoutineDefinition(
+            title=title,
+            tag=TaskTag(tag),
+            target_count=target_count,
+        )
+        store.add_routine(routine)
+
+        # 현재 주에 즉시 Task 생성
+        week = store.get_current_week()
+        if not week.has_routine(routine.id):
+            week.add_task(routine.create_task())
+            store.save_week(week)
+
+    return redirect(url_for("index"))
+
+
+@app.route("/routine/delete/<routine_id>", methods=["POST"])
+def delete_routine(routine_id: str):
+    """Delete a routine definition."""
+    store.remove_routine(routine_id)
     return redirect(url_for("index"))
 
 

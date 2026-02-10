@@ -14,6 +14,7 @@ load_dotenv()
 CONFIG_DIR = Path.home() / ".checkweek"
 CONFIG_FILE = CONFIG_DIR / "config.json"
 TASKS_FILE = CONFIG_DIR / "tasks.json"
+ROUTINES_FILE = CONFIG_DIR / "routines.json"
 
 
 @dataclass

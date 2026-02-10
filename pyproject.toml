@@ -28,3 +28,6 @@ checkweek = "checkweek.cli:main"
 
 [tool.setuptools.packages.find]
 include = ["checkweek*"]
+
+[tool.setuptools.package-data]
+checkweek = ["web/templates/*.html"]

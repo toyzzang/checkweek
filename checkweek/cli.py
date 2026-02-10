@@ -9,7 +9,14 @@ from rich.console import Console
 from rich.table import Table
 
 from checkweek.config import AppConfig
-from checkweek.models import Task, TaskStatus, TaskStore, TaskTag
+from checkweek.models import (
+    RoutineDefinition,
+    Task,
+    TaskStatus,
+    TaskStore,
+    TaskTag,
+    TaskType,
+)
 
 console = Console()
 
@@ -79,7 +86,9 @@ def list_tasks(status: str | None, all_weeks: bool):
         )
         table.add_column("ID", style="dim", width=8)
         table.add_column("Task", min_width=30)
+        table.add_column("Type", width=8)
         table.add_column("Status", width=12)
+        table.add_column("Progress", width=10)
         table.add_column("Tag", width=10)
         table.add_column("Due", width=12)
 
@@ -95,10 +104,14 @@ def list_tasks(status: str | None, all_weeks: bool):
             tasks = [t for t in tasks if t.status == filter_status]
 
         for task in tasks:
+            progress = f"{task.current_count}/{task.target_count}"
+            task_type = "[cyan]routine[/cyan]" if task.task_type == TaskType.ROUTINE else "once"
             table.add_row(
                 task.id,
                 task.title,
+                task_type,
                 status_styles.get(task.status, str(task.status)),
+                progress,
                 task.tag.value,
                 task.due_date or "-",
             )
@@ -110,8 +123,6 @@ def list_tasks(status: str | None, all_weeks: bool):
         console.print(
             f"  Total: {summary['total']} | "
             f"Done: {summary['done']} | "
-            f"In Progress: {summary['in_progress']} | "
-            f"Todo: {summary['todo']} | "
             f"Completion: {summary['completion_rate']} | "
             f"Notion Synced: {synced}"
         )
@@ -140,6 +151,65 @@ def done(task_id: str, status: str):
 
 @main.command()
 @click.argument("task_id")
+def check(task_id: str):
+    """Check a task (once: complete, routine: +1 count)."""
+    store = TaskStore()
+    week = store.get_current_week()
+
+    # Find task for display
+    target = None
+    for t in week.tasks:
+        if t.id == task_id:
+            target = t
+            break
+
+    if not target:
+        console.print(f"[red]Task not found:[/red] #{task_id}")
+        return
+
+    week.check_task(task_id)
+    store.save_week(week)
+
+    if target.task_type == TaskType.ONCE:
+        console.print(f"[green]Checked:[/green] {target.title}")
+    else:
+        console.print(
+            f"[green]Checked:[/green] {target.title} "
+            f"[cyan]({target.current_count}/{target.target_count})[/cyan]"
+        )
+
+
+@main.command()
+@click.argument("task_id")
+def uncheck(task_id: str):
+    """Uncheck a task (once: undo, routine: -1 count)."""
+    store = TaskStore()
+    week = store.get_current_week()
+
+    target = None
+    for t in week.tasks:
+        if t.id == task_id:
+            target = t
+            break
+
+    if not target:
+        console.print(f"[red]Task not found:[/red] #{task_id}")
+        return
+
+    week.uncheck_task(task_id)
+    store.save_week(week)
+
+    if target.task_type == TaskType.ONCE:
+        console.print(f"[yellow]Unchecked:[/yellow] {target.title}")
+    else:
+        console.print(
+            f"[yellow]Unchecked:[/yellow] {target.title} "
+            f"[cyan]({target.current_count}/{target.target_count})[/cyan]"
+        )
+
+
+@main.command()
+@click.argument("task_id")
 def remove(task_id: str):
     """Remove a task from the current week."""
     store = TaskStore()
@@ -150,6 +220,86 @@ def remove(task_id: str):
         console.print(f"[green]Removed:[/green] #{task_id}")
     else:
         console.print(f"[red]Task not found:[/red] #{task_id}")
+
+
+# --- Routine commands ---
+
+
+@main.command(name="routine-add")
+@click.argument("title")
+@click.option(
+    "--count",
+    "-c",
+    type=int,
+    default=3,
+    help="How many times per week (default: 3)",
+)
+@click.option(
+    "--tag",
+    "-t",
+    type=click.Choice(VALID_TAGS),
+    default="other",
+    help="Routine tag/category",
+)
+def routine_add(title: str, count: int, tag: str):
+    """Register a new routine (auto-created each week)."""
+    store = TaskStore()
+
+    routine = RoutineDefinition(
+        title=title,
+        tag=TaskTag(tag),
+        target_count=count,
+    )
+    store.add_routine(routine)
+
+    # Also create task for current week
+    week = store.get_current_week()
+    if not week.has_routine(routine.id):
+        week.add_task(routine.create_task())
+        store.save_week(week)
+
+    console.print(
+        f"[green]Routine added:[/green] {routine.title} "
+        f"[cyan](x{routine.target_count}/week)[/cyan] "
+        f"[dim](#{routine.id})[/dim]"
+    )
+
+
+@main.command(name="routine-remove")
+@click.argument("routine_id")
+def routine_remove(routine_id: str):
+    """Remove a registered routine."""
+    store = TaskStore()
+    if store.remove_routine(routine_id):
+        console.print(f"[green]Routine removed:[/green] #{routine_id}")
+    else:
+        console.print(f"[red]Routine not found:[/red] #{routine_id}")
+
+
+@main.command(name="routines")
+def list_routines():
+    """List all registered routines."""
+    store = TaskStore()
+    routines = store.load_routines()
+
+    if not routines:
+        console.print("[yellow]No routines registered.[/yellow]")
+        return
+
+    table = Table(
+        title="Registered Routines",
+        show_header=True,
+        header_style="bold cyan",
+    )
+    table.add_column("ID", style="dim", width=8)
+    table.add_column("Title", min_width=20)
+    table.add_column("Per Week", width=10)
+    table.add_column("Tag", width=10)
+
+    for r in routines:
+        table.add_row(r.id, r.title, str(r.target_count), r.tag.value)
+
+    console.print(table)
 
 
 # --- Notion commands ---

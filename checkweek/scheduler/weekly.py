@@ -9,7 +9,7 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from apscheduler.triggers.cron import CronTrigger
 
 from checkweek.config import AppConfig
-from checkweek.models import Task, TaskStatus, TaskStore, WeeklyTaskList
+from checkweek.models import Task, TaskStatus, TaskStore, TaskType, WeeklyTaskList
 
 logger = logging.getLogger(__name__)
 
@@ -55,9 +55,14 @@ def weekly_sync_job(config: AppConfig | None = None) -> dict:
             logger.error("Failed to sync to Notion: %s", e)
             result["notion_error"] = str(e)
 
-    # 2. Roll over incomplete tasks to next week
-    incomplete = current_week.get_incomplete_tasks()
-    if incomplete:
+    # 2. Roll over incomplete ONE-TIME tasks to next week
+    # Routines are NOT rolled over (they auto-generate from routine definitions)
+    incomplete_once = [
+        t for t in current_week.get_incomplete_tasks()
+        if t.task_type == TaskType.ONCE
+    ]
+
+    if incomplete_once:
         today = date.today()
         next_monday = today + timedelta(days=(7 - today.weekday()))
         next_sunday = next_monday + timedelta(days=6)
@@ -77,7 +82,7 @@ def weekly_sync_job(config: AppConfig | None = None) -> dict:
 
         target_week = existing or next_week
 
-        for task in incomplete:
+        for task in incomplete_once:
             rolled_task = Task(
                 title=task.title,
                 status=TaskStatus.TODO,
@@ -87,8 +92,8 @@ def weekly_sync_job(config: AppConfig | None = None) -> dict:
             target_week.add_task(rolled_task)
 
         store.save_week(target_week)
-        result["rolled_over"] = len(incomplete)
-        logger.info("Rolled over %d incomplete tasks", len(incomplete))
+        result["rolled_over"] = len(incomplete_once)
+        logger.info("Rolled over %d incomplete one-time tasks", len(incomplete_once))
 
     # 3. Auto-commit to GitHub if configured
     if config.github.auto_commit and config.github.repo_path:

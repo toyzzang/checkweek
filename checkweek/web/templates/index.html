@@ -14,159 +14,137 @@
             min-height: 100vh;
         }
 
-        .container { max-width: 1200px; margin: 0 auto; padding: 24px; }
+        .container { max-width: 720px; margin: 0 auto; padding: 24px 16px; }
 
         /* Header */
         header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 32px;
+            margin-bottom: 28px;
         }
-        header h1 { font-size: 28px; font-weight: 700; color: #f8fafc; }
+        header h1 { font-size: 26px; font-weight: 700; color: #f8fafc; }
         header .week-range {
-            font-size: 14px;
+            font-size: 13px;
             color: #94a3b8;
             background: #1e293b;
             padding: 6px 14px;
             border-radius: 8px;
         }
 
-        /* Summary bar */
-        .summary {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 32px;
-        }
-        .summary-card {
-            flex: 1;
+        /* Progress bar */
+        .progress-section {
             background: #1e293b;
             border-radius: 12px;
-            padding: 20px;
-            text-align: center;
+            padding: 18px 20px;
+            margin-bottom: 28px;
         }
-        .summary-card .number {
-            font-size: 32px;
-            font-weight: 700;
-        }
-        .summary-card .label {
-            font-size: 13px;
-            color: #94a3b8;
-            margin-top: 4px;
-        }
-        .summary-card.total .number { color: #f8fafc; }
-        .summary-card.todo .number { color: #f59e0b; }
-        .summary-card.progress .number { color: #3b82f6; }
-        .summary-card.done .number { color: #22c55e; }
-        .summary-card.rate .number { color: #a78bfa; }
-
-        /* Add form */
-        .add-form {
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 32px;
-            display: flex;
-            gap: 12px;
-            align-items: end;
-            flex-wrap: wrap;
-        }
-        .add-form .field { display: flex; flex-direction: column; gap: 4px; }
-        .add-form .field label { font-size: 12px; color: #94a3b8; }
-        .add-form .field.title { flex: 1; min-width: 200px; }
-        .add-form input[type="text"],
-        .add-form input[type="date"],
-        .add-form select {
-            background: #0f172a;
-            border: 1px solid #334155;
-            color: #e2e8f0;
-            padding: 10px 14px;
-            border-radius: 8px;
-            font-size: 14px;
-            outline: none;
-        }
-        .add-form input[type="text"]:focus,
-        .add-form input[type="date"]:focus,
-        .add-form select:focus {
-            border-color: #3b82f6;
-        }
-        .add-form button {
-            background: #3b82f6;
-            color: #fff;
-            border: none;
-            padding: 10px 24px;
-            border-radius: 8px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-        .add-form button:hover { background: #2563eb; }
-
-        /* Kanban board */
-        .board {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-        }
-        @media (max-width: 768px) {
-            .board { grid-template-columns: 1fr; }
-            .summary { flex-wrap: wrap; }
-            .summary-card { min-width: 100px; }
-        }
-
-        .column {
-            background: #1e293b;
-            border-radius: 12px;
-            padding: 16px;
-            min-height: 200px;
-        }
-        .column-header {
+        .progress-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 16px;
-            padding-bottom: 12px;
-            border-bottom: 2px solid #334155;
+            margin-bottom: 10px;
         }
-        .column-header h2 { font-size: 15px; font-weight: 600; }
-        .column-header .count {
+        .progress-header .label { font-size: 14px; color: #94a3b8; }
+        .progress-header .count { font-size: 14px; font-weight: 600; color: #f8fafc; }
+        .progress-bar {
+            width: 100%;
+            height: 8px;
             background: #334155;
-            font-size: 12px;
-            padding: 2px 10px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar .fill {
+            height: 100%;
+            background: linear-gradient(90deg, #3b82f6, #22c55e);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        /* Section */
+        .section {
+            margin-bottom: 24px;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #1e293b;
+        }
+        .section-header h2 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #94a3b8;
+        }
+        .section-header .badge {
+            font-size: 11px;
+            background: #334155;
+            color: #94a3b8;
+            padding: 2px 8px;
             border-radius: 10px;
         }
-        .col-todo .column-header { border-bottom-color: #f59e0b; }
-        .col-progress .column-header { border-bottom-color: #3b82f6; }
-        .col-done .column-header { border-bottom-color: #22c55e; }
 
         /* Task card */
         .task-card {
-            background: #0f172a;
-            border-radius: 8px;
-            padding: 14px;
-            margin-bottom: 10px;
-            border-left: 3px solid transparent;
+            background: #1e293b;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: background 0.15s;
         }
-        .col-todo .task-card { border-left-color: #f59e0b; }
-        .col-progress .task-card { border-left-color: #3b82f6; }
-        .col-done .task-card { border-left-color: #22c55e; }
+        .task-card:hover { background: #253349; }
 
-        .task-card .task-title {
+        /* Checkbox for once tasks */
+        .check-btn {
+            flex-shrink: 0;
+            width: 22px;
+            height: 22px;
+            border-radius: 6px;
+            border: 2px solid #475569;
+            background: transparent;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            color: transparent;
+            font-size: 13px;
+        }
+        .check-btn:hover {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .task-card.completed .check-btn {
+            border-color: #22c55e;
+            background: #22c55e;
+            color: #fff;
+        }
+
+        .task-info {
+            flex: 1;
+            min-width: 0;
+        }
+        .task-title {
             font-size: 14px;
             font-weight: 500;
-            margin-bottom: 10px;
             word-break: break-word;
         }
-        .col-done .task-title {
+        .task-card.completed .task-title {
             text-decoration: line-through;
             color: #64748b;
         }
 
-        .task-meta {
+        .task-right {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            margin-bottom: 10px;
+            gap: 8px;
+            flex-shrink: 0;
         }
 
         .tag {
@@ -180,32 +158,217 @@
         .tag-study { background: #3b0764; color: #c084fc; }
         .tag-health { background: #450a0a; color: #f87171; }
         .tag-meeting { background: #422006; color: #fbbf24; }
-        .tag-other { background: #1e293b; color: #94a3b8; }
+        .tag-other { background: #1e293b; color: #94a3b8; border: 1px solid #334155; }
 
-        .due { font-size: 11px; color: #64748b; }
+        .btn-delete {
+            background: none;
+            border: none;
+            color: #475569;
+            cursor: pointer;
+            font-size: 16px;
+            padding: 2px;
+            line-height: 1;
+            transition: color 0.15s;
+        }
+        .btn-delete:hover { color: #f87171; }
 
-        .task-actions {
+        /* Routine card */
+        .routine-card {
+            background: #1e293b;
+            border-radius: 10px;
+            padding: 14px 16px;
+            margin-bottom: 8px;
+            transition: background 0.15s;
+        }
+        .routine-card:hover { background: #253349; }
+
+        .routine-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .routine-title {
+            font-size: 14px;
+            font-weight: 500;
+            flex: 1;
+            min-width: 0;
+            word-break: break-word;
+        }
+        .routine-card.completed .routine-title {
+            text-decoration: line-through;
+            color: #64748b;
+        }
+
+        .routine-count {
+            font-size: 13px;
+            font-weight: 600;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
+        .routine-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+        }
+
+        /* Progress dots */
+        .progress-dots {
             display: flex;
             gap: 6px;
+            align-items: center;
         }
-        .task-actions form { display: inline; }
-        .task-actions button {
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #334155;
+            transition: background 0.2s;
+        }
+        .dot.filled { background: #3b82f6; }
+        .dot.filled.complete { background: #22c55e; }
+
+        .routine-actions {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-check-routine {
             background: #334155;
             border: none;
-            color: #94a3b8;
-            padding: 4px 10px;
+            color: #e2e8f0;
+            padding: 5px 12px;
             border-radius: 6px;
             font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.15s;
+        }
+        .btn-check-routine:hover { background: #3b82f6; }
+        .btn-check-routine.undo { background: #334155; }
+        .btn-check-routine.undo:hover { background: #475569; }
+
+        /* Completed routine */
+        .routine-card.completed .dot.filled { background: #22c55e; }
+        .routine-card.completed .routine-count { color: #22c55e; }
+
+        /* Add forms */
+        .add-forms {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 28px;
+            flex-wrap: wrap;
+        }
+        .add-btn {
+            flex: 1;
+            min-width: 140px;
+            background: #1e293b;
+            border: 1px dashed #334155;
+            color: #64748b;
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.15s;
+        }
+        .add-btn:hover {
+            border-color: #3b82f6;
+            color: #94a3b8;
+        }
+
+        /* Modal / inline form */
+        .form-panel {
+            display: none;
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #334155;
+        }
+        .form-panel.active { display: block; }
+        .form-panel h3 {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 14px;
+            color: #f8fafc;
+        }
+        .form-row {
+            display: flex;
+            gap: 10px;
+            align-items: end;
+            flex-wrap: wrap;
+        }
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .form-field.grow { flex: 1; min-width: 180px; }
+        .form-field label {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+        .form-field input,
+        .form-field select {
+            background: #0f172a;
+            border: 1px solid #334155;
+            color: #e2e8f0;
+            padding: 9px 12px;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+        }
+        .form-field input:focus,
+        .form-field select:focus {
+            border-color: #3b82f6;
+        }
+        .form-field input[type="number"] { width: 80px; }
+
+        .form-actions {
+            display: flex;
+            gap: 8px;
+            align-items: end;
+        }
+        .btn-submit {
+            background: #3b82f6;
+            color: #fff;
+            border: none;
+            padding: 9px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
         }
-        .task-actions button:hover { background: #475569; color: #e2e8f0; }
-        .task-actions .btn-delete:hover { background: #991b1b; color: #fca5a5; }
+        .btn-submit:hover { background: #2563eb; }
+        .btn-cancel {
+            background: #334155;
+            color: #94a3b8;
+            border: none;
+            padding: 9px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+        .btn-cancel:hover { background: #475569; }
 
-        /* Footer actions */
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 20px;
+            color: #475569;
+            font-size: 13px;
+        }
+
+        /* Footer */
         .footer-actions {
             margin-top: 32px;
             display: flex;
-            gap: 12px;
+            gap: 10px;
             justify-content: center;
         }
         .footer-actions a,
@@ -215,14 +378,48 @@
             color: #94a3b8;
             padding: 10px 20px;
             border-radius: 8px;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             text-decoration: none;
+            transition: all 0.15s;
         }
         .footer-actions a:hover,
         .footer-actions button:hover {
             border-color: #3b82f6;
             color: #e2e8f0;
+        }
+
+        /* Routine manage section */
+        .routine-manage {
+            margin-top: 12px;
+        }
+        .routine-def {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background: #0f172a;
+            border-radius: 8px;
+            margin-bottom: 4px;
+            font-size: 13px;
+            color: #94a3b8;
+        }
+        .routine-def .info { display: flex; align-items: center; gap: 8px; }
+        .routine-def .btn-remove {
+            background: none;
+            border: none;
+            color: #475569;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .routine-def .btn-remove:hover { color: #f87171; }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container { padding: 16px 12px; }
+            .add-forms { flex-direction: column; }
+            .form-row { flex-direction: column; }
+            .form-field.grow { min-width: 100%; }
         }
     </style>
 </head>
@@ -233,140 +430,218 @@
             <span class="week-range">{{ week.week_start }} ~ {{ week.week_end }}</span>
         </header>
 
-        <!-- Summary -->
-        <div class="summary">
-            <div class="summary-card total">
-                <div class="number">{{ summary.total }}</div>
-                <div class="label">Total</div>
+        <!-- Progress -->
+        <div class="progress-section">
+            <div class="progress-header">
+                <span class="label">This Week</span>
+                <span class="count">{{ summary.done }} / {{ summary.total }} Done</span>
             </div>
-            <div class="summary-card todo">
-                <div class="number">{{ summary.todo }}</div>
-                <div class="label">To Do</div>
+            <div class="progress-bar">
+                {% set pct = (summary.done / summary.total * 100) if summary.total > 0 else 0 %}
+                <div class="fill" style="width: {{ pct }}%"></div>
             </div>
-            <div class="summary-card progress">
-                <div class="number">{{ summary.in_progress }}</div>
-                <div class="label">In Progress</div>
-            </div>
-            <div class="summary-card done">
-                <div class="number">{{ summary.done }}</div>
-                <div class="label">Done</div>
-            </div>
-            <div class="summary-card rate">
-                <div class="number">{{ summary.completion_rate }}</div>
-                <div class="label">Completion</div>
-            </div>
+        </div>
+
+        <!-- Add Buttons -->
+        <div class="add-forms">
+            <button class="add-btn" onclick="toggleForm('task-form')">+ Add Task</button>
+            <button class="add-btn" onclick="toggleForm('routine-form')">+ Add Routine</button>
         </div>
 
         <!-- Add Task Form -->
-        <form class="add-form" action="/add" method="post">
-            <div class="field title">
-                <label for="title">New Task</label>
-                <input type="text" id="title" name="title" placeholder="What needs to be done?" required>
-            </div>
-            <div class="field">
-                <label for="tag">Tag</label>
-                <select id="tag" name="tag">
-                    {% for t in tags %}
-                    <option value="{{ t }}">{{ t }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="field">
-                <label for="due_date">Due Date</label>
-                <input type="date" id="due_date" name="due_date">
-            </div>
-            <button type="submit">Add</button>
-        </form>
-
-        <!-- Kanban Board -->
-        <div class="board">
-            <!-- To Do Column -->
-            <div class="column col-todo">
-                <div class="column-header">
-                    <h2>To Do</h2>
-                    <span class="count">{{ groups.todo | length }}</span>
-                </div>
-                {% for task in groups.todo %}
-                <div class="task-card">
-                    <div class="task-title">{{ task.title }}</div>
-                    <div class="task-meta">
-                        <span class="tag tag-{{ task.tag.value }}">{{ task.tag.value }}</span>
-                        {% if task.due_date %}
-                        <span class="due">{{ task.due_date }}</span>
-                        {% endif %}
+        <div class="form-panel" id="task-form">
+            <h3>New Task</h3>
+            <form action="/add" method="post">
+                <div class="form-row">
+                    <div class="form-field grow">
+                        <label for="task-title">Title</label>
+                        <input type="text" id="task-title" name="title" placeholder="What needs to be done?" required>
                     </div>
-                    <div class="task-actions">
-                        <form action="/status/{{ task.id }}/in_progress" method="post">
-                            <button type="submit">Start</button>
-                        </form>
-                        <form action="/status/{{ task.id }}/done" method="post">
-                            <button type="submit">Done</button>
-                        </form>
-                        <form action="/delete/{{ task.id }}" method="post">
-                            <button type="submit" class="btn-delete">Del</button>
+                    <div class="form-field">
+                        <label for="task-tag">Tag</label>
+                        <select id="task-tag" name="tag">
+                            {% for t in tags %}
+                            <option value="{{ t }}">{{ t }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Add</button>
+                        <button type="button" class="btn-cancel" onclick="toggleForm('task-form')">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Add Routine Form -->
+        <div class="form-panel" id="routine-form">
+            <h3>New Routine</h3>
+            <form action="/routine/add" method="post">
+                <div class="form-row">
+                    <div class="form-field grow">
+                        <label for="routine-title">Title</label>
+                        <input type="text" id="routine-title" name="title" placeholder="e.g. Swimming" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="routine-count">Per Week</label>
+                        <input type="number" id="routine-count" name="target_count" min="1" max="14" value="3">
+                    </div>
+                    <div class="form-field">
+                        <label for="routine-tag">Tag</label>
+                        <select id="routine-tag" name="tag">
+                            {% for t in tags %}
+                            <option value="{{ t }}">{{ t }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">Add</button>
+                        <button type="button" class="btn-cancel" onclick="toggleForm('routine-form')">Cancel</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tasks Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Tasks</h2>
+                <span class="badge">{{ once_pending | length }}</span>
+            </div>
+            {% if once_pending %}
+                {% for task in once_pending %}
+                <div class="task-card">
+                    <form action="/check/{{ task.id }}" method="post" style="display:inline">
+                        <button type="submit" class="check-btn"></button>
+                    </form>
+                    <div class="task-info">
+                        <div class="task-title">{{ task.title }}</div>
+                    </div>
+                    <div class="task-right">
+                        <span class="tag tag-{{ task.tag.value }}">{{ task.tag.value }}</span>
+                        <form action="/delete/{{ task.id }}" method="post" style="display:inline">
+                            <button type="submit" class="btn-delete" title="Delete">&times;</button>
                         </form>
                     </div>
                 </div>
                 {% endfor %}
-            </div>
+            {% else %}
+                <div class="empty-state">No pending tasks</div>
+            {% endif %}
+        </div>
 
-            <!-- In Progress Column -->
-            <div class="column col-progress">
-                <div class="column-header">
-                    <h2>In Progress</h2>
-                    <span class="count">{{ groups.in_progress | length }}</span>
-                </div>
-                {% for task in groups.in_progress %}
-                <div class="task-card">
-                    <div class="task-title">{{ task.title }}</div>
-                    <div class="task-meta">
+        <!-- Routines Section -->
+        <div class="section">
+            <div class="section-header">
+                <h2>Routines</h2>
+                <span class="badge">{{ routine_pending | length }}</span>
+            </div>
+            {% if routine_pending %}
+                {% for task in routine_pending %}
+                <div class="routine-card">
+                    <div class="routine-top">
+                        <div class="routine-title">{{ task.title }}</div>
+                        <div class="routine-count">{{ task.current_count }} / {{ task.target_count }}</div>
                         <span class="tag tag-{{ task.tag.value }}">{{ task.tag.value }}</span>
-                        {% if task.due_date %}
-                        <span class="due">{{ task.due_date }}</span>
-                        {% endif %}
                     </div>
-                    <div class="task-actions">
-                        <form action="/status/{{ task.id }}/todo" method="post">
-                            <button type="submit">Back</button>
-                        </form>
-                        <form action="/status/{{ task.id }}/done" method="post">
-                            <button type="submit">Done</button>
-                        </form>
-                        <form action="/delete/{{ task.id }}" method="post">
-                            <button type="submit" class="btn-delete">Del</button>
-                        </form>
+                    <div class="routine-bottom">
+                        <div class="progress-dots">
+                            {% for i in range(task.target_count) %}
+                                <span class="dot{% if i < task.current_count %} filled{% endif %}"></span>
+                            {% endfor %}
+                        </div>
+                        <div class="routine-actions">
+                            {% if task.current_count > 0 %}
+                            <form action="/uncheck/{{ task.id }}" method="post" style="display:inline">
+                                <button type="submit" class="btn-check-routine undo">-1</button>
+                            </form>
+                            {% endif %}
+                            <form action="/check/{{ task.id }}" method="post" style="display:inline">
+                                <button type="submit" class="btn-check-routine">+1</button>
+                            </form>
+                            <form action="/delete/{{ task.id }}" method="post" style="display:inline">
+                                <button type="submit" class="btn-delete" title="Delete">&times;</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
                 {% endfor %}
-            </div>
+            {% else %}
+                <div class="empty-state">No active routines</div>
+            {% endif %}
+        </div>
 
-            <!-- Done Column -->
-            <div class="column col-done">
-                <div class="column-header">
-                    <h2>Done</h2>
-                    <span class="count">{{ groups.done | length }}</span>
-                </div>
-                {% for task in groups.done %}
-                <div class="task-card">
-                    <div class="task-title">{{ task.title }}</div>
-                    <div class="task-meta">
+        <!-- Completed Section -->
+        {% if completed %}
+        <div class="section">
+            <div class="section-header">
+                <h2>Completed</h2>
+                <span class="badge">{{ completed | length }}</span>
+            </div>
+            {% for task in completed %}
+                {% if task.task_type.value == 'once' %}
+                <div class="task-card completed">
+                    <form action="/uncheck/{{ task.id }}" method="post" style="display:inline">
+                        <button type="submit" class="check-btn">&check;</button>
+                    </form>
+                    <div class="task-info">
+                        <div class="task-title">{{ task.title }}</div>
+                    </div>
+                    <div class="task-right">
                         <span class="tag tag-{{ task.tag.value }}">{{ task.tag.value }}</span>
-                        {% if task.due_date %}
-                        <span class="due">{{ task.due_date }}</span>
-                        {% endif %}
-                    </div>
-                    <div class="task-actions">
-                        <form action="/status/{{ task.id }}/todo" method="post">
-                            <button type="submit">Reopen</button>
-                        </form>
-                        <form action="/delete/{{ task.id }}" method="post">
-                            <button type="submit" class="btn-delete">Del</button>
+                        <form action="/delete/{{ task.id }}" method="post" style="display:inline">
+                            <button type="submit" class="btn-delete" title="Delete">&times;</button>
                         </form>
                     </div>
+                </div>
+                {% else %}
+                <div class="routine-card completed">
+                    <div class="routine-top">
+                        <div class="routine-title">{{ task.title }}</div>
+                        <div class="routine-count">{{ task.current_count }} / {{ task.target_count }}</div>
+                        <span class="tag tag-{{ task.tag.value }}">{{ task.tag.value }}</span>
+                    </div>
+                    <div class="routine-bottom">
+                        <div class="progress-dots">
+                            {% for i in range(task.target_count) %}
+                                <span class="dot filled complete"></span>
+                            {% endfor %}
+                        </div>
+                        <div class="routine-actions">
+                            <form action="/uncheck/{{ task.id }}" method="post" style="display:inline">
+                                <button type="submit" class="btn-check-routine undo">-1</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- Registered Routines (manage) -->
+        {% if routines %}
+        <div class="section">
+            <div class="section-header">
+                <h2>Registered Routines</h2>
+                <span class="badge">{{ routines | length }}</span>
+            </div>
+            <div class="routine-manage">
+                {% for r in routines %}
+                <div class="routine-def">
+                    <div class="info">
+                        <span>{{ r.title }}</span>
+                        <span class="tag tag-{{ r.tag.value }}">{{ r.tag.value }}</span>
+                        <span>x{{ r.target_count }}/week</span>
+                    </div>
+                    <form action="/routine/delete/{{ r.id }}" method="post" style="display:inline">
+                        <button type="submit" class="btn-remove" title="Remove routine">&times;</button>
+                    </form>
                 </div>
                 {% endfor %}
             </div>
         </div>
+        {% endif %}
 
         <!-- Footer -->
         <div class="footer-actions">
@@ -376,5 +651,18 @@
             </form>
         </div>
     </div>
+
+    <script>
+        function toggleForm(id) {
+            const panel = document.getElementById(id);
+            const isActive = panel.classList.contains('active');
+            // Close all forms first
+            document.querySelectorAll('.form-panel').forEach(p => p.classList.remove('active'));
+            if (!isActive) {
+                panel.classList.add('active');
+                panel.querySelector('input[type="text"]').focus();
+            }
+        }
+    </script>
 </body>
 </html>
